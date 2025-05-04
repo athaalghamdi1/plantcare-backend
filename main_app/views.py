@@ -2,7 +2,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Plant, User, Analysis, Reminder
-from .serializers import PlantSerializer, UserSerializer, AnalysisSerializer, ReminderSerializer
+from .serializers import PlantSerializer, UserSerializer, AnalysisSerializer, ReminderSerializer, HomePageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -34,10 +34,10 @@ class ReminderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReminderSerializer
     permission_classes = [IsAuthenticated]
     
-# class HomePageView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = HomePage.objects.all()
-#     serializer_class = HomePageSerializer
-#     permission_classes = [IsAuthenticated]
+class HomePageView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HomePage.objects.all()
+    serializer_class = HomePageSerializer
+    permission_classes = [IsAuthenticated]
     
 class LoginView(TokenObtainPairView):
     pass

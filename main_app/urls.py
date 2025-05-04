@@ -1,9 +1,9 @@
 # main_app/urls.py
 from django.urls import path
-from .views import UserDetailView, PlantListView, PlantDetailView, AnalysisListView, ReminderListView, ReminderDetailView
+from .views import UserDetailView, PlantListView, PlantDetailView, AnalysisListView, ReminderListView, ReminderDetailView, HomePageView
 from .views import LoginView, TokenRefreshView
 urlpatterns = [
-    # path('HomePage/',HomePageView.as_view(), name='HomePage'),
+    path('HomePage/',HomePageView.as_view(), name='HomePage'),
     path('users/', UserDetailView.as_view(), name='user-detail'),
     path('plants/', PlantListView.as_view(), name='plant-list'),
     path('plants/<int:pk>/', PlantDetailView.as_view(), name='plant-detail'),
