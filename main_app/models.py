@@ -10,10 +10,14 @@ class User(AbstractUser):
     
     
 class Plant(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='plants')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='plant_images/', null=True, blank=True)
-    care_instructions = models.TextField(blank=True)
+    image = models.ImageField(upload_to='plants/')
+    last_watered = models.DateField()
+    watering_frequency_days = models.IntegerField(default=3)
+    last_fertilized = models.DateField(null=True, blank=True)
+    fertilizing_frequency_days = models.IntegerField(default=14)
+
     def __str__(self):
         return self.name
     
