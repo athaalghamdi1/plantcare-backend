@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
-from .models import Plant, Recommendation, User
+from .models import *
 from rest_framework import generics, status, viewsets
 from rest_framework.views import APIView
-from .serializers import PlantSerializer, UserSerializer
+from .serializers import *
 from datetime import date
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -15,9 +15,18 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-class PlantViewSet(viewsets.ModelViewSet):
-    queryset = Plant.objects.all()
-    serializer_class = PlantSerializer
+class PlantAPIView(APIView):
+    def get(self, request):
+        plants = Plant.objects.filter(user=request.user)
+        serializer = PlantSerializer(plants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request):
+        serializer = PlantSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def Home(request):
@@ -30,28 +39,34 @@ class CreateUserView(generics.CreateAPIView):
   queryset = User.objects.all()
   serializer_class = UserSerializer
   def create(self, request, *args, **kwargs):
-    try:
-      response = super().create(request, *args, **kwargs)
-      user = User.objects.get(username=response.data['username'])
-      refresh = RefreshToken.for_user(user)
-      content = {'refresh': str(refresh), 'access': str(refresh.access_token), 'user': response.data }
-      return Response(content, status=status.HTTP_200_OK)
-    except (ValidationError, IntegrityError) as err:
-      return Response({ 'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+        print(request.data)
+        try:
+            response = super().create(request, *args, **kwargs)
+            print(response)
+            user = User.objects.get(username=response.data['username'])
+            print(user)
+            refresh = RefreshToken.for_user(user)
+            content = {'refresh': str(refresh), 'access': str(refresh.access_token), 'user': response.data }
+            return Response(content, status=status.HTTP_200_OK)
+        except (ValidationError, IntegrityError) as err:
+            print(err)
+            return Response({ 'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
   
 class LoginView(APIView):
-    def post(self, request):
-        try:
-            username = request.data.get('username')
-            password = request.data.get('password')
-            user = authenticate(username=username, password=password)
-            if user:
-                refresh = RefreshToken.for_user(user)
-                content = {'refresh': str(refresh), 'access': str(refresh.access_token),'user': UserSerializer(user).data}
-                return Response(content, status=status.HTTP_200_OK)
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as err:
-            return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+  def post(self, request):
+    try:
+        print(request.data)
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            refresh = RefreshToken.for_user(user)
+            content = {'refresh': str(refresh), 'access': str(refresh.access_token),'user': UserSerializer(user).data}
+            return Response(content, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid credentials'}, status=400)
+    except Exception as err:
+        return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 # def login_view(request):
 #     if request.method == "POST":

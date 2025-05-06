@@ -1,10 +1,9 @@
 from django.urls import path, include
 from . import views
-from .views import PlantViewSet, due_reminders, mark_as_watered, mark_as_fertilized
+from .views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'plants', PlantViewSet, basename='plant')
 
 urlpatterns = [
     path("", views.Home, name="index"),
@@ -13,7 +12,7 @@ urlpatterns = [
     path('users/signup/', views.CreateUserView.as_view(), name='signup'),
     path('users/login/', views.LoginView.as_view(), name='login'),
     # path("plants/", views.plants_list, name="plants_list"),
-    path("plants/", views.PlantViewSet.as_view({'get': 'list'}), name="plants_list"),
+    path("plants/", views.PlantAPIView.as_view(), name="plants_list"),
     path("plant/<int:id>/", views.plant_detail, name="plant_detail"),
     path("logout/", views.logout_view, name="logout"),
     path('', include(router.urls)),
