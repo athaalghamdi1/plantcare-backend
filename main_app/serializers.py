@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Plant, Analysis, Reminder, User
+from .models import Plant, Reminder, User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,10 +11,11 @@ class PlantSerializer(serializers.ModelSerializer):
         model = Plant
         fields = '__all__'
 
-class AnalysisSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Analysis
-        fields = '__all__'
+
+# class AnalysisSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Analysis
+#         fields = '__all__'
 
 class ReminderSerializer(serializers.ModelSerializer):
     class Meta:

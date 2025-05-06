@@ -30,8 +30,15 @@ SECRET_KEY = 'django-insecure-o-h$ok5fw)8v@b(m!(%98e9ril(=c@t4*b(wt_2dlyj6p!foc=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_HEADERS = '*'
+CORS_ALLOWED_ORIGINS=[
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+]
 
 # Application definition
 
@@ -87,11 +94,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOW_ALL_ORIGINS=False
-CORS_ALLOW_HEADERS = '*'
-CORS_ALLOWED_ORIGINS=[
-    "http://localhost:5173"
-]
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -117,8 +120,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': BASE_DIR / 'plantcare.sqlite3',
         'NAME': 'plantcare',
+
     }
 }
 
