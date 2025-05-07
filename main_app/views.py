@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from .models import Plant
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -80,7 +81,16 @@ class PlantAPIView(APIView):
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+class PlantDetail(APIView):     
+    serializer_class = PlantSerializer     
+    lookup_field = 'id'
+    def get(self, request, plant_id):     
+         try:     
+             queryset = Plant.objects.get(id=plant_id)    
+             plant = PlantSerializer(queryset)     
+             return Response(plant.data, status=status.HTTP_200_OK)     
+         except Exception as err:    
+             return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 # def login_view(request):
 #     if request.method == "POST":
