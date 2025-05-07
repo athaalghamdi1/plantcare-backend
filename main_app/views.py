@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from .models import Plant
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -91,6 +92,25 @@ class PlantDetail(APIView):
              return Response(plant.data, status=status.HTTP_200_OK)     
          except Exception as err:    
              return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+         
+    def put(self, request, plant_id):
+        try:
+            plant = get_object_or_404(Plant, id=plant_id)
+            serializer = self.serializer_class(plant, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as err:
+            return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def delete(self, request, plant_id):
+        try:
+            plant = get_object_or_404(Plant, id=plant_id)
+            plant.delete()
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Exception as err:
+            return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 # def login_view(request):
 #     if request.method == "POST":
