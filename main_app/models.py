@@ -39,10 +39,11 @@ class Plant(models.Model):
     
     
 class Reminder(models.Model):
-    plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name='reminders')
     title = models.CharField(max_length=100)
     remind_at = models.DateTimeField()
     is_done = models.BooleanField(default=False)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name='reminders')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reminders')
     def __str__(self):
         return f"{self.title} - {self.remind_at}"
     
@@ -50,6 +51,8 @@ class Reminder(models.Model):
 class Recommendation(models.Model):
     symptom = models.CharField(max_length=255, choices=RECOMMENDATION_CHOICES)    
     solution = models.TextField(blank=True)
+    plant = models.ForeignKey(Plant, on_delete=models.CASCADE, related_name='recommendations')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recommendations')
     def save(self, *args, **kwargs):
             # Automatically set the solution before saving
             self.solution = SYMPTOM_TO_SOLUTION.get(self.symptom, "")

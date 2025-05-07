@@ -2,10 +2,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from .models import Plant
+from .models import Plant, Recommendation
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from .serializers import PlantSerializer, UserSerializer
+from .serializers import PlantSerializer, UserSerializer, RecommendationSerializer
 from datetime import date
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -108,6 +108,47 @@ class PlantDetail(APIView):
         try:
             plant = get_object_or_404(Plant, id=plant_id)
             plant.delete()
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Exception as err:
+            return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class RecommendationAPIView(APIView):
+    def get(self, request):
+        recommendations = Recommendation.objects.filter(user=request.user)
+        serializer = RecommendationSerializer(recommendations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request):
+        serializer = RecommendationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class RecommendationDetail(APIView):
+    serializer_class = RecommendationSerializer
+    lookup_field = 'id'
+    def get(self, request, recommendation_id):
+         try:
+             queryset = Recommendation.objects.get(id=recommendation_id)
+             recommendation = RecommendationSerializer(queryset)
+             return Response(recommendation.data, status=status.HTTP_200_OK)
+         except Exception as err:
+             return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def put(self, request, recommendation_id):
+        try:
+            recommendation = get_object_or_404(Recommendation, id=recommendation_id)
+            serializer = self.serializer_class(recommendation, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as err:
+            return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def delete(self, request, recommendation_id):
+        try:
+            recommendation = get_object_or_404(Recommendation, id=recommendation_id)
+            recommendation.delete()
             return Response({'success': True}, status=status.HTTP_200_OK)
         except Exception as err:
             return Response({'error': str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

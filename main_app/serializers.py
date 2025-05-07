@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Plant, Reminder
+from .models import Plant, Reminder, Recommendation
 from django.contrib.auth.models import User
 
 
@@ -27,12 +27,14 @@ class PlantSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'last_watered', 'last_fertilized']
 
 
-# class AnalysisSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Analysis
-#         fields = '__all__'
+class RecommendationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recommendation
+        fields = '__all__'
 
 class ReminderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reminder
         fields = '__all__'
+        # fields =['plant', 'symptom']
+
