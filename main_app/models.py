@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 RECOMMENDATION_SOLUTION_PAIRS = (
     ("Yellow leaves", "Reduce watering frequency."),
@@ -16,13 +16,6 @@ RECOMMENDATION_SOLUTION_PAIRS = (
 )
 RECOMMENDATION_CHOICES = [ (symptom, symptom) for symptom, _ in RECOMMENDATION_SOLUTION_PAIRS ]
 SYMPTOM_TO_SOLUTION = dict(RECOMMENDATION_SOLUTION_PAIRS)
-
-class User(AbstractUser):
-    is_dark_mode = models.BooleanField(default=False)
-    language = models.CharField(max_length=10, choices=[('en', 'English'), ('ar', 'Arabic')], default='en')
-    def __str__(self):
-        return self.username
-    
     
 class Plant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

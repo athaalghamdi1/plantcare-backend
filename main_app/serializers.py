@@ -1,18 +1,24 @@
 from rest_framework import serializers
-from .models import Plant, Reminder, User
+from .models import Plant, Reminder
+from django.contrib.auth.models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
+    # Add a password field, make it write-only
+    # prevents allowing 'read' capabilities (returning the password via api response)
+    password = serializers.CharField(write_only=True)  
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ('id', 'username', 'email', 'password')
+
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)  # This hashes the password
-        user.save()
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']  
+        )
+      
         return user
 
 class PlantSerializer(serializers.ModelSerializer):
