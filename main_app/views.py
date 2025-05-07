@@ -118,6 +118,7 @@ class RecommendationAPIView(APIView):
         serializer = RecommendationSerializer(recommendations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self, request):
+        print('request', request.data)
         serializer = RecommendationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)

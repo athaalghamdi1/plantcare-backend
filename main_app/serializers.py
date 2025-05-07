@@ -30,11 +30,12 @@ class PlantSerializer(serializers.ModelSerializer):
 class RecommendationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recommendation
-        fields = '__all__'
+        # fields = '__all__'
+        fields =['plant', 'symptom', 'solution']
+
 
 class ReminderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reminder
         fields = '__all__'
-        # fields =['plant', 'symptom']
 
