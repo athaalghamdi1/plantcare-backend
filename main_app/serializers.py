@@ -24,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant
-        fields = ['id', 'name', 'last_watered', 'last_fertilized']
+        fields = ['id', 'name', 'last_watered', 'last_fertilized', 'image']
 
 
 class RecommendationSerializer(serializers.ModelSerializer):
